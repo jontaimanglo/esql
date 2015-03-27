@@ -7,9 +7,11 @@ SQL like interface to Elasticsearch
 * within Elasticsearch, aliases must be assigned for all indices
 
 #overview
-This started as quick code to allow an easier entry level to the Elastic DSL.  I've tried to adhere to the filter
-bitsets and when to use bool and and/or/not.  A groovy script is used for COUNT() when used as a selection criteria; 
-this should be stored on each Elasticsearch server used for queries.
+This started as quick code to transform SQL like queries (only) to the Elastic query DSL.  It is being used only for queries
+and not sure I'll ever add the ability to INSERT or DELETE.
+
+I've tried to adhere to the filter bitsets and when to use bool and and/or/not.  A groovy script (in scripts/) is used for COUNT() 
+when used as a selection criteria; this should be stored on each Elasticsearch server used for queries.
 
 #issues
 When using COUNT(), the Elasticsearch breaker system has been tripped on fields that contain large amounts of data.
@@ -17,6 +19,13 @@ Further, this seems to be more of an occurrence when using COUNT(field)<op>, whe
 using <=, >= appear to work fine.  If you notice this issue, try the same query with multiple COUNT()'s and combinations
 of <= and >=.
 
+#notes
+  * when using EXPLAIN, an explain key will be added to the results dict returned for the query.  the explain key will
+  have both an api and dsl sub key and values
+  * source filtering is used to as there have been some issues when using the DSL search request fields.  there are no
+  partial field matches supported
+  * subfields can be accessed via Elastic dot notation (e.g. field1.field2)
+ 
 #configure
   * within esql.py, set the following key/values pairs in self.es_conf:
     * hosts: list of Elasticsearch hosts
@@ -26,7 +35,8 @@ of <= and >=.
     * user: I used nginx to proxy Elasticsearch, because of this, a user and password were needed.  set to None
     if not needed
     * password: used with user above.  set to None if not needed
-    * date_mapping: for each index, name the mapping field that would be used to for BETWEEN date ranges
+    * date_mapping: for each index, name the mapping field that would be used to for BETWEEN date ranges.  without a 
+    date_mapping, BETWEEN cannot be used
 
 #what is supported
   * commands:

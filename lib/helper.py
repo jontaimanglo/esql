@@ -9,15 +9,6 @@ except:
 	import json
 
 
-###
-# args: v (string or list value)
-#       doLower (lower cleaned string; default is True)
-# purpose: properly clean and lower a string
-# returns: the string after processing
-# usage:
-#       v = cleanAndLower(v)
-# references: None
-###
 def cleanAndLower(v, doLower=True):
         if not v:
                 return None
@@ -37,16 +28,6 @@ def cleanAndLower(v, doLower=True):
                         pass
         return v
 
-###
-# args: v (value to check against elasticsearches special characters
-#       special (is v a special value; e.g. keyword, default is False)
-# purpose: to properly escape elasticsearches special characters
-# returns: an escaped string
-# usage:
-#       escaped_v = escapeESSpecialChars(v)
-# references: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html (reserved characters)
-#       + - && || ! ( ) { } [ ] ^ " ~ * ? : \ /
-###
 def escapeESSpecialChars(v, special=False, ftype=None):
         es_special_list = ['+', '-', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '/']
         es_special_addl = {}
@@ -63,39 +44,6 @@ def escapeESSpecialChars(v, special=False, ftype=None):
                         continue
         return v
 
-###
-# args: base_url (url path for given request; can be provided as a dict in the format:
-#                       {base_url1: req_path, base_url2: req_path}
-#               as a list in the format:
-#                       [base_url1, base_url2]
-#               or as a string:
-#                       base_url1
-#               )
-#       req_path (path to object(s); can be provided as an empty string (if base_url is a
-#               dict), or as a list that matches, by index number, to base_urls' list. ex:
-#                       [base_url1, base_url2], [req_path_for_base_url1, req_path_for_base_url2]
-#               if there is NOT a corresponding req_path at the index number of base_url list,
-#               req_path[0] will be used as default; default is None)
-#       headers (any header values in dict format; default None)
-#       auth (any authentication in appropriate methods; default is empty list; a list of 
-#               authentication dicts can be passed. like base_url and req_path lists, a
-#               corresponding value based on index number will be used.)
-#       cookies (cookie data in dict format; default None)
-#       data (post data in dict format; default None; data can be a list of data dicts. like
-#               base_url and req_path lists, a corresponding value based on index number
-#               will be used.)
-#       files (file data to send - will cause a multipart/form-data submission and neither this, nor
-#               data will be jsonized prior to submission)
-#       method (which method to use other than GET or POST; can be a list)
-#       verify (should SSL sites be verified?  Default is True)
-#       timeout (server timeout, default is -1; that is, system configured timeout is used)
-#       returnErr (if set to True, return error as given by the request)
-# purpose: build the proper request format
-# returns: json results if successful, text if not, finally None
-# usage:
-#       results = urlQuery('www.somesite.biz', 'question/path')
-# references: None      
-###
 def urlQuery(base_url, req_path=None, headers={}, auth=[], cookies={}, data=None, files=None, method=None, verify=True, timeout=-1, returnErr=True):
         if not req_path:
                 req_path = ""
@@ -237,15 +185,6 @@ def urlQuery(base_url, req_path=None, headers={}, auth=[], cookies={}, data=None
                 return {"error": _errCode}
         return False
 
-###
-# args: s (string to hash)
-#       hasher (hash library to use)
-# purpose: determines the hash of a string
-# returns: hash of the string
-# usage:
-#       stringhash = hashString("stringtohash")
-# references: None
-###
 def hashString(s, hasher):
         if isinstance(hasher, basestring):
                 hasher = hashlib.new(hasher)

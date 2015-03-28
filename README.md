@@ -38,6 +38,9 @@ of <= and >=.
     * date_mapping: for each index, name the mapping field that would be used to for BETWEEN date ranges.  without a 
     date_mapping, BETWEEN cannot be used
 
+#query
+  * python esql.py -c "SQL LIKE QUERY"
+
 #what is supported
   * commands:
     * SELECT, SHOW

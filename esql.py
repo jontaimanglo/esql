@@ -597,7 +597,9 @@ class esql:
 			q["query"]["filtered"].update({"filter": {"bool": temp_q}})
 		return q
 
-	def _buildQueryDict(self, q, op, t={}):
+	def _buildQueryDict(self, q, op, t=None):
+		if not t:
+			t = {}
 		try:
 			q["query"]["filtered"]["filter"][op]
 		except:

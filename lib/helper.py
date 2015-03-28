@@ -10,7 +10,7 @@ except:
 
 
 ###
-# args: v (string value)
+# args: v (string or list value)
 #       doLower (lower cleaned string; default is True)
 # purpose: properly clean and lower a string
 # returns: the string after processing
@@ -21,6 +21,11 @@ except:
 def cleanAndLower(v, doLower=True):
         if not v:
                 return None
+	if isinstance(v, list):
+		temp_v = []
+		for vv in v:
+			temp_v.append(cleanAndLower(vv, doLower=doLower))
+		return temp_v
         if not isinstance(v, str):
                 v = "%s" % v
         v = v.strip('\r\n')

@@ -44,9 +44,11 @@ def escapeESSpecialChars(v, special=False, ftype=None):
                         continue
         return v
 
-def urlQuery(base_url, req_path=None, headers={}, auth=[], cookies={}, data=None, files=None, method=None, verify=True, timeout=-1, returnErr=True):
+def urlQuery(base_url, req_path=None, headers={}, auth=[], cookies={}, data=None, files=None, method=None, verify=True, timeout=-1, returnAs="json", returnErr=True):
         if not req_path:
                 req_path = ""
+        if isinstance(req_path, basestring):
+                req_path = [req_path]
         _base_url = OrderedDict()
         if isinstance(base_url, list) and isinstance(req_path, list):
                 for bc, bu in enumerate(base_url):
@@ -55,9 +57,21 @@ def urlQuery(base_url, req_path=None, headers={}, auth=[], cookies={}, data=None
                         except:
                                 _base_url[bu] = req_path[0]
         elif not isinstance(base_url, dict):
-                _base_url = {base_url: req_path}
+                # assume base_url is string
+                if isinstance(req_path, basestring):
+                        _base_url = {base_url: req_path}
+                elif isinstance(req_path, list):
+                        for path in req_path:
+                                _base_url.update({base_url: path})
         else:
                 _base_url = base_url
+        if data:
+                if not isinstance(data, list):
+                        _data = [data]
+                else:
+                        _data = data
+        else:
+                _data = data
         if data:
                 if not isinstance(data, list):
                         _data = [data]
@@ -92,6 +106,7 @@ def urlQuery(base_url, req_path=None, headers={}, auth=[], cookies={}, data=None
                 timeout = float(timeout)
         else:
                 timeout = float(c.getConfSection("main")["timeout"])
+        returnAs = returnAs.lower()
         _errCode = False
         url_counter = 0
         for base_url, req_path in _base_url.iteritems():
@@ -165,13 +180,35 @@ def urlQuery(base_url, req_path=None, headers={}, auth=[], cookies={}, data=None
                                 #print("[DEBUG] Checking next url")
                                 url_counter += 1
                                 continue
-                        try:
-                                return req.json()
-                        except Exception, err:
-                                #print("[DEBUG] json not available: %s" % err)
-                                return req.text
-                        except:
-                                #print("[DEBUG] text not available")
+                        if returnAs == "json":
+                                try:
+                                        return req.json()
+                                except Exception, err:
+                                        time_main_log.debug("[DEBUG] json not available: %s" % err)
+                                        try:
+                                                return req.text
+                                        except Exception, err2:
+                                                time_main_log.debug("[DEBUG] text not available")
+                                                _errCode = "%s, %s" %(err2, err)
+                        elif returnAs == "text":
+                                try:
+                                        return req.text
+                                except Exception, err:
+                                        time_main_log.debug("[DEBUG] text not available")
+                                        _errCode = str(err)
+                        elif returnAs == "raw":
+                                try:
+                                        return req.raw
+                                except Exception, err:
+                                        time_main_log.debug("[DEBUG] raw not available")
+                                        _errCode = str(err)
+                        elif returnAs == "content":
+                                try:
+                                        return req.content
+                                except Exception, err:
+                                        time_main_log.debug("[DEBUG] content not available")
+                                        _errCode = str(err)
+                        else:
                                 return True
                 except Exception, err:
                         print("[WARN] Failed to obtain request '%s': %s" %(req_url, err))

@@ -625,6 +625,7 @@ class esql:
         	for t in temp_conditions:
                 	if not self._checkForInnerList(t):
 	                        prp_op = None
+				apd_op = None
         	                skip = False
                 	        if len(t) == 1:
                         	        if t[0].lower() in ["and", "or", "not"]:
@@ -635,7 +636,6 @@ class esql:
                         	        if t[0].lower() in ["and", "or", "not"]:
                                 	        prp_op = t[0].lower()
 						t.pop(0)
-	                                apd_op = None
         	                        if t[len(t)-1].lower() in ["and", "or", "not"]:
                 	                        apd_op = t[len(t)-1].lower()
 						t.pop(len(t)-1)

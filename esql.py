@@ -844,7 +844,7 @@ class esql:
 
 	def _formatLike(self, fields, mapping, op=DEFAULT_BOOL, build=None):
 		fields = cleanAndLower(fields, doLower=False)
-		_regexp = {"regexp": {fields[0]: re.sub("^('|\")|('|\")$", "", fields[2])}}
+		_regexp = {"regexp": {fields[0]: {"value": re.sub("^('|\")|('|\")$", "", fields[2]), "flags": "NONE"}}}
 		mapping_path = self._mapping_match(mapping, fields[0])
 		return self._formatDSL(_regexp, mapping_path, op=op, build=build), op, self._buildQKeys(op, fields[0], "_~"), fields[2]
 

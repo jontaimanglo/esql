@@ -211,7 +211,7 @@ class esql:
 					except:
 						res[idx] = _temp_res["properties"]
 		elif t == "select" or t == "explain":
-			_distinct = {}
+			self._distinct = {}
 			if self.total_count and not self.distinct:
 				return {"count": results["count"]}
 			for rk in results["hits"]["hits"]:
@@ -703,8 +703,8 @@ class esql:
                 		if t == "(":
 					op_count -= 1
                         		try:
-                                		if re.search("count", n[i-1], re.IGNORECASE):
-                                        		del n[i-1]
+                                		if re.search("count", n[len(n)-1], re.IGNORECASE):
+                                        		del n[len(n)-1]
                                         		temp = ["count", "("]
 						else:
 							raise Exception("no exception")

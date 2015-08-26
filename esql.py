@@ -116,7 +116,7 @@ class esql:
 		try:
 			es_results = es_results["error"]
 		except:
-			es_results = self._formatResults(es_results, t)
+			es_results = self._formatResults(es_results, t, q.keys()[0])
 		try:
 			_esr = es_results.copy()
 			_esr.update(explain)
@@ -193,7 +193,7 @@ class esql:
 						dsl = "%s/_search" % qk
 		return dsl, data
 
-	def _formatResults(self, results, t):
+	def _formatResults(self, results, t, idx=None):
 		res = {}
 		if t == "show":
 			for rk, rv in results.iteritems():
@@ -204,7 +204,8 @@ class esql:
 					except:
 						res[idx] = 1
 				except:
-					idx = rv["mappings"].keys()[0]
+					if not idx:
+						idx = rv["mappings"].keys()[0]
 					_temp_res = rv["mappings"].values()[0]
 					try:
 						res[idx].update(_temp_res["properties"])

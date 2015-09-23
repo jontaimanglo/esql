@@ -697,10 +697,21 @@ class esql:
 		op_found = False
 		op_trigger = False
 		op_count = 0
+		like_found = False
 		for i, t in enumerate(temp_conditions):
 			if i == skip:
 				continue
         		if re.search("\(|\)", t):
+                                try:
+                                        if re.search("like", n[len(n)-1], re.IGNORECASE):
+                                                t = re.sub("\s+\(\s+", "(", t)
+                                                t = re.sub("\s+\)\s+", ")", t)
+                                                like_found = True
+                                        else:
+                                                like_found = False
+                                except:
+                                        like_found = False
+                                        pass
                 		if t == "(":
 					op_count -= 1
                         		try:
@@ -731,7 +742,8 @@ class esql:
 						op_found = False
 						op_trigger = False
                         		temp = []
-                       		continue
+                                if not like_found:
+                                        continue
 			if op_trigger:
 				try:
 					if t.lower() in OP_MAP.keys():
